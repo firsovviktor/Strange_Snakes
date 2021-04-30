@@ -5,9 +5,9 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
-#define PI 3.1415927
-#define AspectRatio 4
-#define Snake_speed 0.01
+#define PI 3.14159265
+int AspectRatio = 4;
+float Snake_speed = 0.01;
 using namespace std;
 using namespace sf;
 
@@ -261,7 +261,6 @@ vector<Tile> gen_triangle_field (int Width, int Height, int step, Tile tile){
 vector<Tile> near_tr_field(vector<Tile> field, int Height, int Width, int step){
     int a = Width/step - 1;
     int r = Height/(sqrt(3)*step);
-    float f = sqrt(3)/6;
     int j, cur;
     for (int i=0; i<r; i++) {
         for (int jj = 0; jj < 4 * a; jj++) {
@@ -279,9 +278,9 @@ vector<Tile> near_tr_field(vector<Tile> field, int Height, int Width, int step){
                     field[cur].close.push_back(&field[cur+4*a-3]);
                 }
                 field[cur].close.push_back(&(field[cur+1]));
-                cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
-                cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
-                cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
+                //cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
+                //cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
+                //cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
             }
             if (jj%4 == 1){
                 if ((cur+3)%(4*a)==0){
@@ -291,9 +290,9 @@ vector<Tile> near_tr_field(vector<Tile> field, int Height, int Width, int step){
                 }
                 field[cur].close.push_back(&(field[cur-1]));
                 field[cur].close.push_back(&(field[cur+1]));
-                cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
-                cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
-                cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
+                //cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
+                //cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
+                //cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
             }
             if (jj%4 == 2){
                 field[cur].close.push_back(&(field[cur-1]));
@@ -303,9 +302,9 @@ vector<Tile> near_tr_field(vector<Tile> field, int Height, int Width, int step){
                 }else{
                     field[cur].close.push_back(&(field[cur+5]));
                 }
-                cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
-                cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
-                cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
+                //cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
+                //cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
+                //cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
             }
             if (jj%4 == 3){
                 field[cur].close.push_back(&(field[cur-1]));
@@ -319,10 +318,175 @@ vector<Tile> near_tr_field(vector<Tile> field, int Height, int Width, int step){
                 }else{
                     field[cur].close.push_back(&(field[cur+4*a-3]));
                 }
-                cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
-                cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
-                cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
+                //cout << "/" << cur << "/" << field[cur].close.size() << "/" << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y;
+                //cout << "/" << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y;
+                //cout << "/" << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << "/" << endl;
             }
+        }
+    }
+    return field;
+}
+vector<Tile> gen_hex_field(int Width, int Height, int step, Tile t, int r, int a){
+    float f = sqrt(3)/6;
+    vector<Tile> field;
+    field.clear();
+
+    for (int i=0; i<r; i++){
+        for (int j=0; j<a; j++){
+            t.center = {step*f*3 + step*j*6*f, step + 3*step*i};
+            t.vert.clear();
+            t.vert.push_back({0, -step});
+            t.vert.push_back({step*3*f, -step/2});
+            t.vert.push_back({step*3*f, step/2});
+            t.vert.push_back({0, step});
+            t.vert.push_back({-step*3*f, step/2});
+            t.vert.push_back({-step*3*f, -step/2});
+            t.close = {};
+            field.push_back(t);
+            //cout << t.center.x << " " << t.center.y << endl;
+        }
+        for (int j=0; j<a; j++){
+            t.center = {step*f*6 + step*j*6*f, 5*step/2 + 3*step*i};
+            t.vert.clear();
+            t.vert.push_back({0, -step});
+            t.vert.push_back({step*3*f, -step/2});
+            t.vert.push_back({step*3*f, step/2});
+            t.vert.push_back({0, step});
+            t.vert.push_back({-step*3*f, step/2});
+            t.vert.push_back({-step*3*f, -step/2});
+            t.close = {};
+            field.push_back(t);
+            //cout << t.center.x << " " << t.center.y << endl;
+        }
+    }
+    return field;
+}
+vector<Tile> near_hex_field(vector<Tile> field, int Height, int Width, int step, int r, int a){
+    //cout << "The very beginning of near" << endl;
+
+    float f = sqrt(3)/6;
+    int cur;
+
+    //cout << "before near cycle" << endl;
+    //cout << a << " " << r << endl;
+
+    for (int i=0; i<r; i++){
+        for (int j=0; j<a; j++){
+            cur = i*2*a + j;
+
+            //cout << "In the first cycle, now at: " << i << "/" << r << " " << j << "/" << a << endl;
+
+            // 0 - heading
+            if ((i==0)&&(j==0)){
+                field[cur].close.push_back(&(field[r*2*a-1]));
+            }else{
+                if (i==0){
+                    field[cur].close.push_back(&(field[r*2*a-a + j - 1]));
+                }
+                if (j==0){
+                    field[cur].close.push_back(&(field[cur-1]));
+                }
+                if ((i!=0)&&(j!=0)){
+                    field[cur].close.push_back(&(field[cur - a - 1]));
+                }
+            }
+
+            //1 - heading
+            if (i==0){
+                field[cur].close.push_back(&(field[2*r*a - a + j]));
+            }else{
+                field[cur].close.push_back(&(field[cur - a]));
+            }
+
+            //2 - heading, universal
+            if (j==0){
+                field[cur].close.push_back(&(field[cur + a - 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur - 1]));
+            }
+
+            //3 - heading, universal
+            if (j==a-1){
+                field[cur].close.push_back(&(field[cur - a + 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur + 1]));
+            }
+
+            //4 - heading
+            if (j==0){
+                field[cur].close.push_back(&(field[cur + 2*a - 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur + a - 1]));
+            }
+
+            //5 - heading
+            field[cur].close.push_back(&(field[cur + a]));
+
+            //cout << "0: " << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y << endl;
+            //cout << "1: " << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y << endl;
+            //cout << "2: " << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << endl;
+            //cout << "3: " << field[cur].close[3]->center.x << " " << field[cur].close[3]->center.y << endl;
+            //cout << "4: " << field[cur].close[4]->center.x << " " << field[cur].close[4]->center.y << endl;
+            //cout << "5: " << field[cur].close[5]->center.x << " " << field[cur].close[5]->center.y << endl;
+        }
+
+        for (int j=0; j<a; j++){
+            cur = i*2*a + a + j;
+
+            //cout << "In the second cycle, now at: " << i << "/" << r << " " << j << "/" << a << endl;
+
+            // 0 - heading
+            field[cur].close.push_back(&(field[cur - a]));
+
+            // 1 - heading
+            if (j == a-1){
+                field[cur].close.push_back(&(field[cur - 2*a + 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur - a + 1]));
+            }
+
+            //2 - heading, universal
+            if (j==0){
+                field[cur].close.push_back(&(field[cur + a - 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur - 1]));
+            }
+
+            //3 - heading, universal
+            if (j == a-1){
+                field[cur].close.push_back(&(field[cur - a + 1]));
+            }else{
+                field[cur].close.push_back(&(field[cur + 1]));
+            }
+
+            // 4 - heading
+            if (i == r-1){
+                field[cur].close.push_back(&(field[j]));
+            }else{
+                field[cur].close.push_back(&(field[cur + a]));
+            }
+
+            // 5 - heading
+            if ((i == r-1)&&(j == a-1)){
+                field[cur].close.push_back(&(field[0]));
+            }else{
+                if (i==r-1){
+                    field[cur].close.push_back(&(field[j+1]));
+                }
+                if (j==a-1){
+                    field[cur].close.push_back(&(field[cur+1]));
+                }
+                if ((i!=r-1)&&(j!=a-1)){
+                    //cout << "success" << endl;
+                    field[cur].close.push_back(&(field[cur+a+1]));
+                }
+            }
+            //cout << "0: " << field[cur].close[0]->center.x << " " << field[cur].close[0]->center.y << endl;
+            //cout << "1: " << field[cur].close[1]->center.x << " " << field[cur].close[1]->center.y << endl;
+            //cout << "2: " << field[cur].close[2]->center.x << " " << field[cur].close[2]->center.y << endl;
+            //cout << "3: " << field[cur].close[3]->center.x << " " << field[cur].close[3]->center.y << endl;
+            //cout << "4: " << field[cur].close[4]->center.x << " " << field[cur].close[4]->center.y << endl;
+            //cout << "5: " << field[cur].close[5]->center.x << " " << field[cur].close[5]->center.y << endl;
         }
     }
     return field;
@@ -342,12 +506,15 @@ bool check_if_dead (Snake s){
     }
     return false;
 }
+void win_screen(int score){
+    cout << "You have won! Your score is: " << score << "!" << endl;
+}
 
 int main() {
     srand(time(NULL));
     // Устанавливаем 8-й уровень сглаживания
-    string type_of_field = "Triangle";
-    const int Width = 800, Height = 800, step = 40;
+    string type_of_field = "Hex";
+    const int Width = 1000, Height = 800, step = 40;
     Tile Prototype({0, 0}, {255, 1, 1, 255}, {1, 255, 1, 50}, 1, {{10, 30}, {10, 100}, {50, 70}}, {});
     Snake s;
     s.countour = {128, 1, 128, 255};
@@ -362,6 +529,10 @@ int main() {
     ContextSettings settings;
     settings.antialiasingLevel = 8;
 
+    int r = (Height/step - 1)/3;
+    float fl = Width/sqrt(3);
+    int a = floor(fl)/step - 1;
+
     // Объект, который, собственно, является главным окном приложения
     RenderWindow window(VideoMode(Width, Height), "SFML Works!", Style::Default, settings);
     window.clear(Color::White);
@@ -371,18 +542,27 @@ int main() {
         field = gen_square_field(Width, Height, step, Prototype);
         field = near_sq_field(field, Height, Width, step);
     }
-    //cout << "before field" << endl;
     if (type_of_field == "Triangle"){
         field = gen_triangle_field(Width, Height, step, Prototype);
-        cout << "after gen, before near" << endl;
         field = near_tr_field(field, Height, Width, step);
     }
+
+    //cout << "before field" << endl;
+    if (type_of_field == "Hex"){
+        field = gen_hex_field(Width, Height, step, Prototype, r, a);
+        //cout << "after gen, before near" << endl;
+        field = near_hex_field(field, Height, Width, step, r, a);
+    }
     //cout << "after field" << endl;
+
     s.vert.push_back(field[0].center);
     s.vert.push_back(field[1].center);
     s.vert.push_back(field[2].center);
-    s.vert.push_back(field[3].center);
-    Tile cur = field[3];
+    //s.vert.push_back(field[3].center);
+    Tile cur = field[2];
+
+    //cout << "snake initialized" << endl;
+
     int key;
     if (type_of_field == "Square"){
         key = 1;
@@ -390,9 +570,22 @@ int main() {
     if (type_of_field == "Triangle"){
         key = 2;
     }
+    if (type_of_field == "Hex"){
+        key = 3;
+    }
     bool charged = false;
 
-    Apple ap(field[Height/step*Width/step-1], 10, {255, 1, 1, 255}, {1, 1, 1, 255}, 1, true);
+    //cout << "before apple initialization" << endl;
+
+    Apple ap(field[0], step/4, {255, 1, 1, 255}, {1, 1, 1, 255}, 1, true);
+
+    //cout << "after apple initialization" << endl;
+
+    if (type_of_field == "Hex"){
+        ap.radius = step/3;
+    }
+
+    //cout << "Window is starting now" << endl;
 
     while (window.isOpen()) {
         Event event;
@@ -402,16 +595,16 @@ int main() {
             if (type_of_field == "Square"){
                 if (event.type == Event::KeyPressed) {
                     //cout << event.key.code << endl;
-                    if (event.key.code == 22) {
+                    if ((event.key.code == 22)&&(key!=1)) {
                         key = 0; //w
                     }
-                    if (event.key.code == 18) {
+                    if ((event.key.code == 18)&&(key!=0)) {
                         key = 1; //s
                     }
-                    if (event.key.code == 0) {
+                    if ((event.key.code == 0)&&(key!=3)) {
                         key = 2; //a
                     }
-                    if (event.key.code == 3) {
+                    if ((event.key.code == 3)&&(key!=2)) {
                         key = 3; //d
                     }
                 }
@@ -427,6 +620,29 @@ int main() {
                     }
                     if (event.key.code == 3) {
                         key = 2; //d
+                    }
+                }
+            }
+            if (type_of_field == "Hex"){
+                if (event.type == Event::KeyPressed) {
+                    //cout << event.key.code << endl;
+                    if (event.key.code == 22) {
+                        key = 0; //w
+                    }
+                    if (event.key.code == 4) {
+                        key = 1; //e
+                    }
+                    if (event.key.code == 0) {
+                        key = 2; //a
+                    }
+                    if (event.key.code == 3) {
+                        key = 3; //d
+                    }
+                    if (event.key.code == 25) {
+                        key = 4; //z
+                    }
+                    if (event.key.code == 23) {
+                        key = 5; //x
                     }
                 }
             }
@@ -447,9 +663,10 @@ int main() {
         }
         s.time += Snake_speed;
         if (s.time >= 1){
-            //cout << cur.center.x << " /" << cur.center.y << " /" << endl;
+            //cout << "Snake Head is now at: " << cur.center.x << "/" << cur.center.y << endl;
 
             //cout << "cur = *(cur.close[key]);" << endl;
+
             cur = *(cur.close[key]);
 
             //cout << cur.close[0]->center.x << " %" << cur.close[0]->center.y << " %" << endl;
@@ -463,11 +680,13 @@ int main() {
         }
 
         if (ap.is_eaten){
+            int k = 0;
             ap.is_eaten = false;
             bool found = false;
             int rnd = rand()%(field.size());
             Vector2f random_tile;
             while(!found){
+                k++;
                 rnd = (rnd + 1)%(field.size());
                 random_tile = field[rnd].center;
                 found = true;
@@ -475,6 +694,10 @@ int main() {
                     if(random_tile == s.vert[i]){
                         found = false;
                     }
+                }
+                if (k>1e6){
+                    win_screen(s.vert.size());
+                    return 0;
                 }
             }
             ap.tile = field[rnd];
