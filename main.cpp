@@ -47,12 +47,12 @@ struct Apple {
     int thick;
     bool is_eaten;
     Apple(Tile tile, float radius, Color fill, Color countour,
-         int thick, bool is_eaten): tile(tile),
-                                    radius(radius),
-                                    fill(fill),
-                                    countour(countour),
-                                    thick(thick),
-                                    is_eaten(is_eaten){}
+          int thick, bool is_eaten): tile(tile),
+                                     radius(radius),
+                                     fill(fill),
+                                     countour(countour),
+                                     thick(thick),
+                                     is_eaten(is_eaten){}
 };
 
 ConvexShape draw_tile(const Tile& figure){
@@ -549,10 +549,6 @@ int main() {
     ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    int r = (Height/step - 1)/3;
-    float fl = Width/sqrt(3);
-    int a = floor(fl)/step - 1;
-
     string Difficulty = "None";
 
     if (interface){
@@ -641,26 +637,22 @@ int main() {
                     Difficulty = "Normal";
                 }
             }
-
             if ((x>=605)&&(x<=605+160)){
                 if ((y>=160)&&(y<=160+60)){
                     Button_pressed = "Hard";
                     Difficulty = "Hard";
                 }
             }
-
             if ((x>=60)&&(x<=60+680)){
                 if ((y>=310)&&(y<=310+60)){
                     Button_pressed = "set";
                 }
             }
-
             if ((x>=250)&&(x<=250+280)){
                 if ((y>=440)&&(y<=440+100)){
                     Button_pressed = "start";
                 }
             }
-
             if (Difficulty!="None"){
                 sandbox.setFillColor({0, 188, 0, 100});
                 normal.setFillColor({0, 0, 188, 100});
@@ -770,6 +762,10 @@ int main() {
         cin >> invisible;
     }
 
+    int r = (Height/step - 1)/3;
+    float fl = Width/sqrt(3);
+    int a = floor(fl)/step - 1;
+
     cout << "Starting a game" << endl;
     // Объект, который, собственно, является главным окном приложения
 
@@ -782,12 +778,10 @@ int main() {
         field = gen_square_field(Width, Height, step, Prototype);
         field = near_sq_field(field, Height, Width, step);
     }
-
     if (type_of_field == "Triangle"){
         field = gen_triangle_field(Width, Height, step, Prototype);
         field = near_tr_field(field, Height, Width, step);
     }
-
     //cout << "before field" << endl;
     if (type_of_field == "Hex"){
         field = gen_hex_field(Width, Height, step, Prototype, r, a);
@@ -795,11 +789,9 @@ int main() {
         field = near_hex_field(field, Height, Width, step, r, a);
     }
     //cout << "after field" << endl;
-
     s.vert.push_back(field[0].center);
     s.vert.push_back(field[1].center);
     s.vert.push_back(field[2].center);
-
     //s.vert.push_back(field[3].center);
 
     Tile cur = field[2];
@@ -810,15 +802,12 @@ int main() {
     if (type_of_field == "Square"){
         key = 1;
     }
-
     if (type_of_field == "Triangle"){
         key = 2;
     }
-
     if (type_of_field == "Hex"){
         key = 3;
     }
-
     bool charged = false;
 
     //cout << "before apple initialization" << endl;
@@ -994,6 +983,17 @@ int main() {
         window.draw(draw_snake_tail(s, step, s.time));
         window.display();
 
+    }
+
+    RenderWindow post(VideoMode(0, 0), "End screen!", Style::Default, settings);
+    post.clear(Color::White);
+    while(post.isOpen()) {
+        Event event;
+        while (post.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                post.close();
+            }
+        }
     }
 
     return 0;
