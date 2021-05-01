@@ -7,7 +7,7 @@
 #include <cstdlib>
 #define PI 3.14159265
 int AspectRatio = 4;
-float Snake_speed = 0.01;
+float Snake_speed = 0.02;
 bool invisible = true;
 using namespace std;
 using namespace sf;
@@ -18,7 +18,7 @@ struct Tile {
     Color inside;
     int thick;
     vector<Vector2f> vert;
-    vector<Tile*> close; // w, s, a, d
+    vector<Tile*> close; // w, s, a, d  // w, a, s // w, e, a, d, z, x
 
     Tile(Vector2f center, Color countour, Color inside,
          int thick, vector<Vector2f> vert, vector<Tile*> close) : center(center),
@@ -532,8 +532,9 @@ int main() {
     srand(time(NULL));
     // Устанавливаем 8-й уровень сглаживания
     bool interface = true;
-    string type_of_field = "Square";
-    int Width = 1000, Height = 800, step = 40;
+    float frame_time = 0.0;
+    string type_of_field = "None";
+    int Width = 800, Height = 800, step = 40;
     Tile Prototype({0, 0}, {255, 1, 1, 255}, {1, 255, 1, 50}, 1, {{10, 30}, {10, 100}, {50, 70}}, {});
     Snake s;
 
@@ -560,22 +561,31 @@ int main() {
             // error...
         }
 
-        RectangleShape sandbox, normal, hard, set, start;
+        RectangleShape sandbox, normal, hard, tr, sq, hex, set, start;
         sandbox.setOutlineColor({0, 0, 0, 255});
         normal.setOutlineColor({0, 0, 0, 255});
         hard.setOutlineColor({0, 0, 0, 255});
+        tr.setOutlineColor({0, 0, 0, 255});
+        sq.setOutlineColor({0, 0, 0, 255});
+        hex.setOutlineColor({0, 0, 0, 255});
         set.setOutlineColor({0, 0, 0, 255});
         start.setOutlineColor({0, 0, 0, 255});
 
         sandbox.setOutlineThickness(5);
         normal.setOutlineThickness(5);
         hard.setOutlineThickness(5);
+        tr.setOutlineThickness(5);
+        sq.setOutlineThickness(5);
+        hex.setOutlineThickness(5);
         set.setOutlineThickness(5);
         start.setOutlineThickness(5);
 
         sandbox.setFillColor({0, 188, 0, 100});
         normal.setFillColor({0, 0, 188, 100});
         hard.setFillColor({188, 0, 0, 100});
+        tr.setFillColor({0, 188, 0, 100});
+        sq.setFillColor({0, 0, 188, 100});
+        hex.setFillColor({188, 0, 0, 100});
         set.setFillColor({0, 188, 0, 100});
         start.setFillColor({0, 188, 0, 100});
 
@@ -588,8 +598,17 @@ int main() {
         hard.setSize({160, 60});
         hard.setPosition(605, 160);
 
+        tr.setSize({180, 60});
+        tr.setPosition(235, 240);
+
+        sq.setSize({160, 60});
+        sq.setPosition(430, 240);
+
+        hex.setSize({160, 60});
+        hex.setPosition(605, 240);
+
         set.setSize({680, 60});
-        set.setPosition(60, 310);
+        set.setPosition(60, 340);
 
         start.setSize({280, 100});
         start.setPosition(250, 440);
@@ -643,8 +662,26 @@ int main() {
                     Difficulty = "Hard";
                 }
             }
+            if ((x>=235)&&(x<=235+180)){
+                if ((y>=240)&&(y<=240+60)){
+                    Button_pressed = "Triangle";
+                    type_of_field = "Triangle";
+                }
+            }
+            if ((x>=430)&&(x<=430+160)){
+                if ((y>=240)&&(y<=240+60)){
+                    Button_pressed = "Square";
+                    type_of_field = "Square";
+                }
+            }
+            if ((x>=605)&&(x<=605+160)){
+                if ((y>=240)&&(y<=240+60)){
+                    Button_pressed = "Hex";
+                    type_of_field = "Hex";
+                }
+            }
             if ((x>=60)&&(x<=60+680)){
-                if ((y>=310)&&(y<=310+60)){
+                if ((y>=340)&&(y<=340+60)){
                     Button_pressed = "set";
                 }
             }
@@ -671,6 +708,24 @@ int main() {
                 }
             }
 
+            if (type_of_field!="None"){
+                tr.setFillColor({0, 188, 0, 100});
+                sq.setFillColor({0, 0, 188, 100});
+                hex.setFillColor({188, 0, 0, 100});
+
+                if (type_of_field == "Triangle"){
+                    tr.setFillColor({0, 255, 0, 255});
+                }
+
+                if (type_of_field == "Square"){
+                    sq.setFillColor({0, 0, 255, 255});
+                }
+
+                if (type_of_field == "Hex"){
+                    hex.setFillColor({255, 0, 0, 255});
+                }
+            }
+
             if (Button_pressed == "set"){
                 Difficulty = "set";
                 interface.close();
@@ -684,6 +739,9 @@ int main() {
             interface.draw(normal);
             interface.draw(hard);
             interface.draw(set);
+            interface.draw(tr);
+            interface.draw(sq);
+            interface.draw(hex);
 
             interface.draw(start);
             text.setString("SETTINGS");
@@ -716,10 +774,34 @@ int main() {
             text.setPosition(640, 160);
             interface.draw(text);
 
+            text.setString("Field:");
+            text.setCharacterSize(40);
+            text.setFillColor({0, 0, 0, 255});
+            text.setPosition(20, 240);
+            interface.draw(text);
+
+            text.setString("Triangle");
+            text.setCharacterSize(40);
+            text.setFillColor({0, 0, 0, 255});
+            text.setPosition(240, 240);
+            interface.draw(text);
+
+            text.setString("Square");
+            text.setCharacterSize(40);
+            text.setFillColor({0, 0, 0, 255});
+            text.setPosition(440, 240);
+            interface.draw(text);
+
+            text.setString("Hex");
+            text.setCharacterSize(40);
+            text.setFillColor({0, 0, 0, 255});
+            text.setPosition(640, 240);
+            interface.draw(text);
+
             text.setString("Advanced settings through console");
             text.setCharacterSize(40);
             text.setFillColor({0, 0, 0, 255});
-            text.setPosition(70, 310);
+            text.setPosition(70, 340);
             interface.draw(text);
 
             text.setString("START");
@@ -731,9 +813,12 @@ int main() {
             interface.display();
         }
     }
-
+    //return 0;
     if (Difficulty == "None"){
         Difficulty = "Sandbox";
+    }
+    if (type_of_field == "None"){
+        type_of_field = "Square";
     }
 
     if (Difficulty == "set"){
@@ -752,7 +837,7 @@ int main() {
         cout << "Chose your difficulty. Sandbox/Normal/Hard" << endl;
         cin >> Difficulty;
 
-        cout << "Chose initial speed of the snake. 0.002 - 0.05 is recommended." << endl;
+        cout << "Chose initial speed of the snake. 0.01 - 0.05 is recommended." << endl;
         cin >> Snake_speed;
 
         cout << "Chose ratio of tile size to the snake size (an integer). 4 is recommended" << endl;
@@ -899,9 +984,14 @@ int main() {
         }
 
         s.time += Snake_speed;
+        if (clock() - frame_time < 20){
+            _sleep(20 - clock() + frame_time);
+        }
+        frame_time = clock();
+        //cout << frame_time << endl;
 
         if (Difficulty == "Hard"){
-            Snake_speed += 1e-7;
+            Snake_speed += 1e-6;
         }
 
         if (s.time >= 1){
@@ -919,7 +1009,7 @@ int main() {
             }else{
                 charged = false;
                 if (Difficulty == "Hard"){
-                    Snake_speed += 1e-3;
+                    Snake_speed += 5e-3;
                 }
             }
         }
