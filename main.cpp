@@ -7,7 +7,7 @@
 #include <cstdlib>
 #define PI 3.14159265
 int AspectRatio = 4;
-float Snake_speed = 0.02;
+float Snake_speed = 0.04;
 bool invisible = true;
 using namespace std;
 using namespace sf;
@@ -837,7 +837,7 @@ int main() {
         cout << "Chose your difficulty. Sandbox/Normal/Hard" << endl;
         cin >> Difficulty;
 
-        cout << "Chose initial speed of the snake. 0.01 - 0.05 is recommended." << endl;
+        cout << "Chose initial speed of the snake. 0.02 - 0.1 is recommended." << endl;
         cin >> Snake_speed;
 
         cout << "Chose ratio of tile size to the snake size (an integer). 4 is recommended" << endl;
